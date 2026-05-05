@@ -1,0 +1,152 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+
+```{r}
+scRNA_obj_all = readRDS("/Volumes/h30492/farkkilab2/9_EyeMT/Data_analysis/geomx_processing/batch123-2808/deconvolution/bayes_prism/bp_res_mid_lvl_ct_updated_expr_mtx_cleaned_deseq2_vst_harmony_corr.RDS")
+
+```
+
+```{r}
+# List of cell types
+cell_types <- c(
+  
+  "Endothelial_cells", "tumor", "Fibroblasts", "Bcells", "Tcells_CD4", "Tcells_CD8", "Tcells_other","Fibroblasts_Mesothelial", "Macrophages_Monocytes", "Mast_cells", "NKcells", "DCs"
+)
+
+# Output directory
+out_dir <- "/Users/nikamikhailava/Desktop/Lab_stuff/batch_merged_new/"
+
+# Loop through each cell type and save
+for (ct in cell_types) {
+  
+  # Get expression matrix
+  expr_mat <- scRNA_obj_all[[ct]]
+  
+  # Clean file name (no spaces)
+  file_name <- gsub(" ", "_", ct)
+  
+  # Write CSV
+  write.csv(
+    expr_mat,
+    paste0(out_dir, file_name, "_gene_expression_data_new_batch_merged_1903.csv"),
+    row.names = TRUE
+  )
+  
+  cat("Saved:", ct, "\n")
+}
+
+```
+deseq2_vst_harmony_corr
+
+```{r}
+geomx_obj <- readRDS("/Volumes/h30492/farkkilab2/9_EyeMT/Data_analysis/geomx_processing/batch123-2808/geomx_qc_norm_batch_eff_rm.RDS")
+final_expr <- assayData(geomx_obj)[["harmony_batch_corr_deseq2_vst"]]
+
+dim(final_expr)  # should be 14174 x 1180
+head(final_expr[, 1:5])
+```
+```{r}
+write.csv(final_expr, "/Volumes/h30492/farkkilab2/4_CellCycle/tcycif/4_10_Expansion/Transferred_ROIs/batch123_gene_expression_not_deconvoluted_harmony_batch_corr_deseq2_vst_3003.csv", row.names = TRUE)
+```
+
+
+
+```{r}
+scRNA_obj_all = readRDS("/../Volumes/h30492/farkkilab2/9_EyeMT/geomx_results/batch12-1205/deconvolution/bayes_prism/bp_res_mid_lvl_ct.RDS")
+```
+```{r}
+fibroblasts_data <- scRNA_obj_all$Fibroblasts
+```
+```{r}
+scRNA_obj_all = readRDS("/Users/nikamikhailava/Desktop/batch_merged_new/bp_res_mid_lvl_ct_expr_mtx_cleaned_vst_harmony_batch_corr.RDS")
+
+```
+```{r}
+write.csv(fibroblasts_data, "/Users/nikamikhailava/Desktop/batch_merged_new/fibroblasts_gene_expression_data_new_batch_merged.csv", row.names = TRUE)
+```
+
+```{r}
+geomx_obj_all = readRDS("//Users/nikamikhailava/Desktop/batch_merged_new/geomx_qc_norm_batch_eff_rm.RDS")
+``
+
+```
+
+
+
+```{r}
+
+geomx_obj <- readRDS("/Users/nikamikhailava/Desktop/batch_merged_new/geomx_qc_norm_batch_eff_rm.RDS")
+
+# Check the object
+geomx_obj
+
+```
+```{r}
+```{r}
+geomx_obj <- readRDS("/Users/nikamikhailava/Desktop/batch_merged_new/geomx_qc_norm_batch_eff_rm.RDS")
+final_expr <- assayData(geomx_obj)[["harmony_batch_corr_deseq2_vst"]]
+
+dim(final_expr)  # should be 14174 x 1180
+head(final_expr[, 1:5])
+```
+
+
+```{r}
+library(SummarizedExperiment)
+
+assayNames(geomx_obj_all)
+```
+```{r}
+names(geomx_obj_all@assay)
+```
+
+
+
+```{r}
+library(SummarizedExperiment)
+```{r}
+
+```
+
+assayNames(geomx_obj_all)
+```
+
+```{r}
+library(GeomxTools)
+library(Biobase)
+```
+```{r}
+expr <- exprs(geomx_obj_all)
+```
+
+
+```{r}
+dim(expr)
+head(rownames(expr))   # gene names
+head(colnames(expr))  # ROI / sample IDs
+
+```
+```{r}
+protocolData(geomx_obj_all)@data
+```
+```{r}
+head(expr)
+```
+
+```{r}
+write.csv(expr,"/Users/nikamikhailava/Desktop/batch_merged_new/batch123_gene_expression_not_deconvoluted.csv")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+"/Volumes/h30492/farkkilab2/9_EyeMT/Data_analysis/geomx_processing/batch123-2808/geomx_qc_norm_batch_eff_rm.RDS"
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

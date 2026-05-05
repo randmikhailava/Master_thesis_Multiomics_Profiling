@@ -1,0 +1,26 @@
+{
+    "id": "15F7C480",
+    "path": "/Volumes/h30492/farkkilab2/4_CellCycle/geomx/Analysis/workflows_Nika_master_thesis/Analysis_in_R/volcano_plot_DGE.R",
+    "project_path": "volcano_plot_DGE.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1776848283677.0,
+    "source_on_save": false,
+    "relative_order": 13,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "29,14",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1776933422,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1776933422691,
+    "read_only": false,
+    "read_only_alternatives": []
+}

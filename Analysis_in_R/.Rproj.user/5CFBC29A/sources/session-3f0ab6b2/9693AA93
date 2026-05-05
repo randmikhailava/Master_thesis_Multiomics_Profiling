@@ -1,0 +1,24 @@
+{
+    "id": "9693AA93",
+    "path": "/Volumes/h30492/farkkilab2/4_CellCycle/geomx/Analysis/workflows_Nika_master_thesis/Analysis_in_R/limma_ssGSEA_pathways_singularity_check.R",
+    "project_path": "limma_ssGSEA_pathways_singularity_check.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1777382027593.0,
+    "source_on_save": false,
+    "relative_order": 12,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1777026852,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1777026852,
+    "read_only": false,
+    "read_only_alternatives": []
+}

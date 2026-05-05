@@ -1,0 +1,94 @@
+library(GeomxTools)
+library(data.table)
+library(dplyr)
+
+# --- 1. SETUP PARAMETERS ---
+deconv_bp_path   <- "/Volumes/h30492/farkkilab2/9_EyeMT/Data_analysis/geomx_processing/batch123-2808/deconvolution/bayes_prism/bp_res_mid_lvl_ct_updated_expr_mtx_cleaned_deseq2_vst_harmony_corr.RDS"
+aoi_summary_path <- "/Volumes/h30492/farkkilab2/4_CellCycle/geomx/Data/proliferative_aois.csv"
+output_dir       <- "output/dge"
+dge_name         <- "Tumor_Deconv_LMM"
+
+# Comparison Logic
+comparison_type  <- 'between' 
+cofounder_name   <- 'Sample'
+main_var_name    <- "AOI_category"
+min_aoi_nr       <- 1
+
+dir.create(file.path(output_dir, dge_name), recursive = TRUE, showWarnings = FALSE)
+
+# --- 2. LOAD DATA ---
+cat("Loading datasets...\n")
+deconv_mtx <- readRDS(deconv_bp_path)
+aoi_meta   <- fread(aoi_summary_path)
+
+# Ensure metadata and matrix match exactly
+aoi_meta   <- aoi_meta[aoi_meta$SegmentID %in% colnames(deconv_mtx), ]
+deconv_mtx <- deconv_mtx[, aoi_meta$SegmentID]
+
+# --- 3. PREPARE GEOMX OBJECT ---
+# Creating a minimal NanoStringGeoMxSet to satisfy mixedModelDE requirements
+new_assay <- new.env(parent = emptyenv())
+new_assay[["exprs"]] <- as.matrix(deconv_mtx)
+
+geomx_obj_dge <- NanoStringGeoMxSet(
+  assayData = new_assay,
+  phenoData = AnnotatedDataFrame(as.data.frame(aoi_meta))
+)
+
+# --- 4. PREPARE FACTORS ---
+# Strictly following your logic for factor naming
+pData(geomx_obj_dge)$main_var_factor <- as.factor(pData(geomx_obj_dge)[[main_var_name]])
+pData(geomx_obj_dge)$cofounder_factor  <- as.factor(pData(geomx_obj_dge)[[cofounder_name]])
+
+# Define Model Formula for 'between' comparison
+model_formula <- ~ main_var_factor + (1 | cofounder_factor)
+
+# --- 5. RUN DGE (mixedModelDE) ---
+cat("Running Mixed Model DE on Mac (MultiCore enabled)...\n")
+
+mixed_result <- tryCatch({
+  mixedModelDE(
+    geomx_obj_dge,
+    elt = "exprs",
+    modelFormula = model_formula, 
+    groupVar = 'main_var_factor',
+    # detectCores() works perfectly on Mac
+    nCores = (parallel::detectCores() - 1), 
+    multiCore = TRUE 
+  )
+}, error = function(e) {
+  cat("Error during model execution:", e$message, "\n")
+  return(NULL)
+})
+
+# --- 6. FORMAT & SAVE RESULTS ---
+if(!is.null(mixed_result)){
+  cat("Formatting results...\n")
+  
+  # rbind the list of means/results
+  r_test <- do.call(rbind, mixed_result["lsmeans", ])
+  tests  <- rownames(r_test)
+  r_test <- as.data.frame(r_test)
+  r_test$Contrast <- tests
+  
+  # Extract gene names mapped to the results
+  r_test$Gene <- unlist(lapply(colnames(mixed_result),
+                               rep, nrow(mixed_result["lsmeans", ][[1]])))
+  
+  # Benjamini-Hochberg correction
+  r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
+  
+  # Select and rename columns to match your desired output
+  final_dge_results <- r_test %>%
+    select(Gene, Contrast, Estimate, P_Value = `Pr(>|t|)`, FDR) %>%
+    arrange(P_Value)
+  
+  # Save to CSV
+  out_file <- file.path(output_dir, dge_name, "Tumor_Deconv_LMM_Results.csv")
+  fwrite(final_dge_results, out_file)
+  
+  cat("Success! Results saved to:", out_file, "\n")
+  print(head(final_dge_results))
+} else {
+  cat("No results generated. Check if AOI_category has at least 2 levels.\n")
+}

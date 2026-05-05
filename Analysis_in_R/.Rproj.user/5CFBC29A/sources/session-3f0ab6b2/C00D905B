@@ -1,0 +1,27 @@
+{
+    "id": "C00D905B",
+    "path": "/Volumes/h30492/farkkilab2/4_CellCycle/geomx/Analysis/workflows_Nika_master_thesis/Analysis_in_R/retrieving_GeoMx_expression_data.Rmd",
+    "project_path": "retrieving_GeoMx_expression_data.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1776716500260.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "11,145",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1775733647,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1776932062986,
+    "read_only": false,
+    "read_only_alternatives": []
+}

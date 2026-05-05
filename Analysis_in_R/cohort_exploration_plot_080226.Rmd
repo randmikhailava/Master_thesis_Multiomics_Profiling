@@ -1,0 +1,165 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(dplyr)
+library(ComplexHeatmap)
+```
+
+
+```{r}
+df <- read.csv("/Volumes/h30492/farkkilab2/4_CellCycle/geomx/Data/Nika_Masters_thesis_gsea_data_for_analysis/Sample_Selection_080226_adjusted.csv",sep = ";", stringsAsFactors = FALSE)
+colnames(df)
+```
+
+
+```{r}
+df <- df %>% rename(
+  `NACT status` = `NACT`, 
+  `Discovery CyCIF` = `Discovery.CyCIF`,
+  `HRP status`=`HRP.status`
+)
+```
+```{r}
+df$`Expansion CyCIF` <- "yes"
+```
+
+
+
+
+```{r}
+df <- df[order(df$GeoMx, df$Xenium), ]
+```
+
+```{r}
+col_expansion <- c("yes"= "#FD8F52")
+col_discovery  <- c("yes"= "#FAC205")
+col_geomx <- c("yes"="#069AF3")
+col_xenium  <- c("yes"= "#C79FEF")
+col_HR <- c("HRD"="#386641","HRP"="#FF4500","unreliable"= "white","not known"="white")
+col_tissue <- c("Omentum"= "#56C596", "Adnexa"= "#329D9C","Ovary"="#205072")
+
+col_NACT <- c("IDS"="#ff5858","PDS"="green")
+
+
+colours <- list(
+  "Expansion CyCIF"=col_expansion,
+  "Discovery CyCIF"=col_discovery,
+  "GeoMx" =col_geomx,
+  "Xenium"=col_xenium,
+  "Tissue" = col_tissue,
+  "HRP status" = col_HR,
+  "NACT status"=col_NACT
+)
+```
+
+
+```{r}
+Rowann <- HeatmapAnnotation(
+  df =df[,c("Expansion CyCIF","Discovery CyCIF","GeoMx","Xenium","NACT status","Tissue", "HRP status")],         # use all columns
+  which = "column",
+  col = colours,
+  annotation_name_gp = gpar(fontsize = 10, fontface = "bold"),
+  gp = gpar(col = "black", lwd = 1.5),
+  gap = unit(c(0.8, 0.8, 0.8, 2, 0.8, 0.8), "mm"),
+  na_col = "white"
+)
+
+```
+
+
+
+
+
+
+```{r}
+
+df$Sample_num <- 1:nrow(df)
+mat <- t(as.matrix(df$Sample_num))
+colnames(mat)<- df$Sample
+ 
+ 
+hmap <- Heatmap(
+  mat,
+  cluster_columns = FALSE,
+  top_annotation = Rowann,
+  width = unit(10, "cm"),
+  height = unit(5, "cm"),
+  column_names_rot=90,
+  column_names_side = "top",
+  column_names_gp = gpar(fontsize = 4, fontface = "bold", rot = 90, just = "left"),
+
+  )
+
+draw(hmap, show_heatmap_legend = FALSE,annotation_legend_side = "bottom", merge_legends = FALSE)
+
+
+```
+
+
+
+```{r}
+# 1. Rename the column in your dataframe first
+# This ensures the label on the right side of the plot updates automatically
+#library(dplyr)
+df <- df %>% rename(`t-CyCIF Samples` = `Expansion CyCIF`)
+
+# Rename columns in df for a more formal legend
+df <- df %>% rename(
+  `t-CyCIF Data` = `t-CyCIF Samples`,
+  `Treatment Status` = `NACT status`,
+  `Anatomical Site` = `Tissue`
+)
+
+# Remember to update your 'colours' list keys to match these new names!
+# Update your colours list to match the new name
+colours[["t-CyCIF Data"]] <- col_expansion
+colours[["Treatment Status"]] <- col_NACT
+colours[["Anatomical Site"]] <- col_tissue
+
+# 2. Update Annotation with the new column name
+Rowann <- HeatmapAnnotation(
+  df = df[, c("t-CyCIF Data", "Treatment Status", "Anatomical Site")], 
+  which = "column",
+  col = colours,
+  annotation_name_gp = gpar(fontsize = 10, fontface = "bold"),
+  gp = gpar(col = "black", lwd = 1), 
+  gap = unit(c(1, 1), "mm"),            
+  na_col = "white"
+)
+
+# 3. Create Heatmap
+hmap <- Heatmap(
+  mat,
+  cluster_columns = FALSE,
+  top_annotation = Rowann,
+  width = unit(15, "cm"), 
+  height = unit(0.01, "cm"),
+  column_names_side = "bottom",
+  column_names_gp = gpar(fontsize = 5, fontface = "bold"),
+  show_row_names = FALSE,
+  rect_gp = gpar(type = "none"),
+  show_heatmap_legend = FALSE,
+  
+  # Title and Justification
+  column_title = "t-CyCIF Sample Cohort Overview",
+  column_title_side = "top",
+  column_title_gp = gpar(fontsize = 12, fontface = "bold"),
+  #column_title_just = "left" # Moves the title to the left
+)
+
+# 4. Final Draw
+draw(
+  hmap, 
+  annotation_legend_side = "bottom",
+  merge_legends = FALSE
+)
+```
+
+
