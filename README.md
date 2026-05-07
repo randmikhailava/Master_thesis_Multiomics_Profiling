@@ -4,9 +4,11 @@
 This repository contains the code utilized in the Master's thesis: "Multi-omics profiling of cell-cycle spatial niches in high-grade serous carcinoma."
 
 📖 Overview
+
 This project investigates the mechanisms operating within the spatially cell-cycle defined highly proliferative niches in High-Grade Serous Carcinoma (HGSC). To achieve this, the study integrates multi-omics data by leveraging spatial transcriptomics (GeoMx) alongside tissue-based cyclic immunofluorescence (t-CyCIF).
 
 🗂️ Repository Structure
+
 The code is organized into three main analytical stages:
 
 1. Tribus Phenotyping and Gating
