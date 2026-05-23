@@ -24,6 +24,8 @@ Logic Table Utilized:
 
 <img width="540" height="300" alt="Screenshot 2026-05-06 at 16 43 23" src="https://github.com/user-attachments/assets/309f1370-38b5-4d42-bd6f-3617422b9b19" />
 
+Note: This directory also includes visualization scripts to generate stacked barplots, illustrating the distribution and proportions of cell classes for each sample. 
+
 
 2. Image Visualization and ROI Transfer
 Directory: /Rerun_visualization_and_ROI_transfer/
